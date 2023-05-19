@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if response %}
+
+<pre>
+<code class='line-numbers language-{{lang}}'>
+{{response}}
+
+</code>
+</pre>
+<br/><br/>
+
+<form method="POST" action="{% url 'suggest' %}">
+    {% csrf_token %}
+  
+  <div class="mb-3">
+    <textarea class="form-control" name="code" placeholder="Have AI Suggest Code" id="exampleFormControlTextarea1" rows="3">{{ code }}</textarea>
+  </div>
+
+  <button type="submit" class="btn btn-secondary">Submit</button>
+</form>
+<br/>
+
+{% else %}
+
+<pre>
+<code class='line-numbers language-python'>
+    if name == "John":
+        print("Hello John!")
+    else:
+        print("Hello Friend")
+</code>
+</pre>
+<br/><br/>
+
+<form method="POST" action="{% url 'suggest'%}">
+    {% csrf_token %}
+  
+  <div class="mb-3">
+    <textarea class="form-control" name="code" placeholder="Have AI Suggest Code" id="exampleFormControlTextarea1" rows="3"></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-secondary">Submit</button>
+</form>
+<br/>
+{% endif %}
+
+{% endblock %}
