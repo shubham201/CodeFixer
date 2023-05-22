@@ -15,7 +15,10 @@
           </li>
 
           {% if user.is_authenticated %}
-          
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'past' %}">Past Code</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'logout' %}">Logout</a>
           </li>

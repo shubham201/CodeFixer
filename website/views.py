@@ -5,6 +5,7 @@ import openai
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from .forms import SignUpForm
+from .models import Code
 
 
 # Create your views here.
@@ -37,6 +38,11 @@ def home(request):
                 )
                 # print(response)
                 response = response["choices"][0]["text"].strip()
+                
+                # Save To Database
+                record = Code(question=code, code_answer=response, language=lang, user=request.user)
+                record.save()
+                
                 return render(request, 'home.html', {'lang_list': lang_list, 'response': response, 'code': code, 'lang': lang})
             except Exception as e:
                 # print(e)
@@ -65,6 +71,11 @@ def suggest(request):
             )
             # print(response)
             response = response["choices"][0]["text"].strip()
+
+            # Save To Database
+            record = Code(question=code, code_answer=response, user=request.user)
+            record.save()
+            
             return render(request, 'suggest.html', {'response': response, 'code': code})
         except Exception as e:
             # print(e)
@@ -105,3 +116,17 @@ def register_user(request):
     else:
         form = SignUpForm()
     return render(request, 'register.html', {"form": form})
+
+def past(request):
+    if request.user.is_authenticated:
+        code = Code.objects.filter(user_id=request.user.id)
+        return render(request, 'past.html', {"code":code})
+    else:
+        messages.success(request, "You must be logged in to view this page.")
+        return redirect('home')
+
+def delete_past(request, Past_id):
+    past = Code.objects.get(pk=Past_id)
+    past.delete()
+    messages.success(request, "Code deleted successfully.")
+    return redirect('past')
